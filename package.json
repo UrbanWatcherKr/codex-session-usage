@@ -7,8 +7,7 @@
   "files": [
     "bin/",
     "src/",
-    "README.md",
-    "USAGE.ko.md"
+    "README.md"
   ],
   "bin": {
     "codex-session-usage": "./bin/codex-session-usage.mjs",

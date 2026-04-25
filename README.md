@@ -35,7 +35,6 @@ Files to publish:
 ```text
 .gitignore
 README.md
-USAGE.ko.md
 package.json
 bin/
 src/
