@@ -4,7 +4,7 @@ Codex CLI usage reporter and status-line installer.
 
 This package reads the same Codex app-server account endpoint that the Codex TUI uses, so it reports usage against the logged-in ChatGPT/Codex subscription plan instead of asking users to configure guessed limits.
 
-Korean usage and deployment guide: [USAGE.ko.md](./USAGE.ko.md)
+
 
 It reports:
 
