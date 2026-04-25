@@ -1,0 +1,24 @@
+{
+  "name": "codex-session-usage",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Codex CLI account-plan usage reporter and status-line installer.",
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "USAGE.ko.md"
+  ],
+  "bin": {
+    "codex-session-usage": "./bin/codex-session-usage.mjs",
+    "codex-usage": "./bin/codex-session-usage.mjs"
+  },
+  "scripts": {
+    "usage": "node bin/codex-session-usage.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
