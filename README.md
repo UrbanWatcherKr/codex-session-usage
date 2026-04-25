@@ -1,53 +1,39 @@
 # codex-session-usage
 
-Codex CLI usage reporter and status-line installer.
+Codex TUI 하단에 모델, 현재 폴더, 5시간 한도, 주간 한도, 컨텍스트 사용량을 표시하도록 설정하는 설치 도구입니다.
 
-This package reads the same Codex app-server account endpoint that the Codex TUI uses, so it reports usage against the logged-in ChatGPT/Codex subscription plan instead of asking users to configure guessed limits.
+계정 정보나 한도 값을 직접 입력하지 않습니다. 이미 로그인된 Codex 세션을 기준으로 Codex가 제공하는 내장 status line 항목을 켭니다.
 
+## 설치
 
-
-It reports:
-
-- detected Codex account plan, for example `plus`
-- official 5-hour usage percent and reset time
-- official weekly usage percent and reset time
-- current local Codex session/thread tokens from `~/.codex/state_5.sqlite`
-- a JSONL snapshot history of each run at `~/.codex-session-usage/snapshots.jsonl`
-
-## Install from GitHub
-
-Publish this package as the root of a GitHub repository. The repository root
-must contain `package.json`, `bin/`, and `src/`.
+일반 터미널에서 실행합니다.
 
 ```bash
-npx github:<owner>/codex-session-usage install
-```
-
-For a persistent global command:
-
-```bash
-npm install -g github:<owner>/codex-session-usage
+npm install -g github:UrbanWatcherKr/codex-session-usage
 codex-session-usage install
 ```
 
-Files to publish:
+그 다음 Codex를 완전히 종료했다가 다시 실행합니다.
 
-```text
-.gitignore
-README.md
-package.json
-bin/
-src/
-test/
+```bash
+codex
 ```
 
-Do not publish local runtime data such as `node_modules/`, `.env`, `~/.codex/`,
-or `~/.codex-session-usage/`.
+이후 Codex 하단에 아래 형태의 status line이 표시됩니다.
 
-The `install` command writes Codex TUI `tui.status_line` to include:
+```text
+gpt-5.5 high · ~/project · 5h 27% · weekly 88% · Context 21% used …
+```
+
+표시되는 5시간/주간 한도 값은 Codex TUI의 내장 `five-hour-limit`, `weekly-limit` 항목이 보여주는 값입니다.
+
+## 설치 확인
+
+설정 파일에 아래 값이 들어가면 설치된 것입니다.
 
 ```toml
-tui.status_line = [
+[tui]
+status_line = [
   "model-with-reasoning",
   "current-dir",
   "five-hour-limit",
@@ -57,57 +43,32 @@ tui.status_line = [
 ]
 ```
 
-Restart Codex after installing. Codex already has built-in status-line items for 5-hour and weekly limits, so this is the most stable way to put the values in the footer without patching the native binary.
+설정 파일 위치:
 
-## CLI usage
+```text
+~/.codex/config.toml
+```
+
+## 현재 사용률 확인
+
+터미널에서 아래 명령을 실행하면 현재 Codex 계정 기준 사용률을 따로 확인할 수 있습니다.
 
 ```bash
 codex-session-usage
-codex-session-usage --verbose
-codex-session-usage --json
-codex-session-usage --history --json
 ```
 
-Local development:
-
-```bash
-node bin/codex-session-usage.mjs
-node bin/codex-session-usage.mjs install
-```
-
-Example compact output:
+예시:
 
 ```text
 model gpt-5.5 | plan plus | 5h 38% used (62% left, resets Apr 25, 12:02 PM) | 7d 6% used (94% left, resets Apr 29, 10:31 AM)
 ```
 
-## Why app-server
+## 제거
 
-Codex exposes `account/read` and `account/rateLimits/read` through `codex app-server`. The rate-limit response includes:
+전역 설치를 제거하려면:
 
-- `planType`
-- `primary.usedPercent`
-- `primary.windowDurationMins`
-- `primary.resetsAt`
-- `secondary.usedPercent`
-- `secondary.windowDurationMins`
-- `secondary.resetsAt`
+```bash
+npm uninstall -g codex-session-usage
+```
 
-For current Codex CLI versions, `primary` is the 5-hour window and `secondary` is the weekly window.
-
-## Notes
-
-- This package does not read or print access tokens.
-- Snapshot history stores plan, session id, model, usage percentages, and reset times. It does not store account email.
-- `--offline` skips app-server and only reads local Codex files, so official usage percentages are unavailable.
-- Requires the `sqlite3` command for local session/thread token summaries.
-
-## Applied skill
-
-- `openai-docs`: used to verify Codex configuration/status-line behavior and official plan-limit context.
-
-## References
-
-- Codex config reference: https://developers.openai.com/codex/config-reference
-- Codex with ChatGPT plans: https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan
-- Codex app-server: https://developers.openai.com/codex/app-server
+Codex 하단 표시 설정까지 제거하려면 `~/.codex/config.toml`에서 `[tui] status_line` 항목을 직접 삭제하거나 원하는 항목으로 수정합니다.
